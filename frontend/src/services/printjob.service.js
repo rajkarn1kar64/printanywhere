@@ -51,4 +51,9 @@ const printJobService = {
   getPrintJobById,
 };
 
+const deletePrintJob = async (id) => {
+  const res = await apiService.delete(`/print-jobs/${id}`);
+  return res.data;
+};
+
 export default printJobService;

@@ -118,6 +118,13 @@ const getQueuedPrintJobs = async (
   return printJobs;
 };
 
+const deletePrintJob = async (jobId, userId) => {
+  const job = await PrintJob.findOneAndDelete({ _id: jobId, user: userId });
+  if (!job) throw new Error("Print job not found");
+  return job;
+};
+// add deletePrintJob to the export default { ... }
+
 export default {
   createPrintJob,
   getMyPrintJobs,

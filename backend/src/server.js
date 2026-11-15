@@ -3,8 +3,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
-import uploadRouter from "./routes/upload.route.js";
 
+
+import uploadRouter from "./routes/upload.route.js";
 import authRouter from "./routes/auth.route.js";
 import printerRouter from "./routes/printer.route.js";
 import printJobRouter from "./routes/printJob.route.js";

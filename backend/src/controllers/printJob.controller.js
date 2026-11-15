@@ -112,6 +112,16 @@ const getQueuedPrintJobs = async (req, res) => {
   }
 };
 
+const deletePrintJob = async (req, res) => {
+  try {
+    await printJobService.deletePrintJob(req.params.id, req.user.userId);
+    res.status(200).json({ success: true, message: "Print job deleted" });
+  } catch (error) {
+    res.status(404).json({ success: false, message: error.message });
+  }
+};
+// add to export default
+
 export default {
   createPrintJob,
   getMyPrintJobs,
