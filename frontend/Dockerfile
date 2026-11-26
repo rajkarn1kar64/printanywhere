@@ -1,31 +1,39 @@
-# ---- Stage 1: build the app ----
-FROM node:20-alpine AS build
+# ---- Stage 1: install dependencies ----
+FROM node:20-alpine AS deps
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
+
+# ---- Stage 2: build the Next.js app ----
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+# Make sure a public folder exists even if the project has none
+RUN mkdir -p public
+
+ENV NEXT_TELEMETRY_DISABLED=1
+# Where Next.js forwards /api/* requests (the backend container name in docker-compose)
+ARG BACKEND_URL=http://backend:5000
+ENV BACKEND_URL=$BACKEND_URL
+
 RUN npm run build
 
-# Auto-detect the build output folder (dist, build, out, dist/<name>/browser ...)
-# by looking for the built index.html, ignoring source/template copies.
-RUN set -e; \
-    OUT_INDEX=$(find /app -maxdepth 5 -name index.html \
-      -not -path "*/node_modules/*" \
-      -not -path "/app/index.html" \
-      -not -path "/app/public/*" \
-      -not -path "/app/src/*" | head -n 1); \
-    if [ -z "$OUT_INDEX" ]; then \
-      echo "ERROR: no built index.html found. Contents of /app:"; \
-      ls -la /app; \
-      exit 1; \
-    fi; \
-    echo "Found build output in: $(dirname "$OUT_INDEX")"; \
-    mkdir -p /out; \
-    cp -r "$(dirname "$OUT_INDEX")"/. /out/
+# ---- Stage 3: small runtime image ----
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1 \
+    PORT=3000 \
+    HOSTNAME=0.0.0.0
 
-# ---- Stage 2: serve with nginx ----
-FROM nginx:alpine
-COPY --from=build /out /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+RUN addgroup -S nodejs && adduser -S nextjs -G nodejs
+
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+EXPOSE 3000
+CMD ["node", "server.js"]
