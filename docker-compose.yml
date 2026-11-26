@@ -1,6 +1,3 @@
-# PRODUCTION compose file (used on the EC2 server)
-# Pulls pre-built images from GHCR. Values come from the .env file
-# that the GitHub Actions deploy job writes next to this file.
 
 services:
   mongo:
@@ -20,7 +17,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 20s
-    # No "ports:" on purpose -> MongoDB is NOT reachable from the internet
 
   backend:
     image: ${IMAGE_PREFIX}/myapp-backend:latest
