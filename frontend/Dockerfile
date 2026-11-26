@@ -6,10 +6,13 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
+# Set this to your build output folder: dist or build
+ARG BUILD_DIR=build
+RUN mkdir -p /out && cp -r /app/${BUILD_DIR}/. /out/
+
 # ---- Stage 2: serve with nginx ----
 FROM nginx:alpine
-# Vite outputs to /app/dist. If you use Create React App, change to /app/build
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /out /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

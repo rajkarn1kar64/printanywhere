@@ -1,3 +1,7 @@
+# PRODUCTION compose file (used on the EC2 server)
+# Pulls pre-built images from GHCR. Values come from the .env file
+# that the GitHub Actions deploy job writes next to this file.
+
 services:
   mongo:
     image: mongo:7
@@ -8,17 +12,29 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
     volumes:
       - mongo_data:/data/db
-    # No "ports:" on purpose -> MongoDB is NOT exposed to the internet
+    networks:
+      - app-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    # No "ports:" on purpose -> MongoDB is NOT reachable from the internet
 
   backend:
     image: ${IMAGE_PREFIX}/myapp-backend:latest
     container_name: backend
     restart: unless-stopped
     environment:
+      NODE_ENV: production
       PORT: 5000
       MONGO_URI: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/myapp?authSource=admin
     depends_on:
-      - mongo
+      mongo:
+        condition: service_healthy
+    networks:
+      - app-net
 
   frontend:
     image: ${IMAGE_PREFIX}/myapp-frontend:latest
@@ -28,6 +44,12 @@ services:
       - "80:80"
     depends_on:
       - backend
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge
 
 volumes:
   mongo_data:
