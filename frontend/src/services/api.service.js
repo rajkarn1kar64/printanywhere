@@ -1,9 +1,10 @@
+
 import axios from "axios";
 
 const apiService = axios.create({
   baseURL:
     import.meta.env.VITE_API_URL ||
-    "http://localhost:5000/api"
+    "http://localhost:5000/api",
 
   headers: {
     "Content-Type": "application/json",
@@ -12,25 +13,19 @@ const apiService = axios.create({
 
 apiService.interceptors.request.use(
   (config) => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 apiService.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       console.error("Unauthorized request");
