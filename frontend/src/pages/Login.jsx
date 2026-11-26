@@ -1,13 +1,11 @@
-"use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link, useNavigate } from "react-router-dom";
 
 import authService from "@/services/auth.service.js";
 
 export default function LoginPage() {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -35,7 +33,7 @@ export default function LoginPage() {
     try {
       await authService.login(formData);
 
-      router.replace("/dashboard");
+      navigate("/dashboard", { replace: true });
     } catch (error) {
       setError(
         error.response?.data?.message ||
@@ -115,7 +113,7 @@ export default function LoginPage() {
             <p className="mt-6 text-center text-sm text-slate-400">
               Don't have an account?{" "}
               <Link
-                href="/register"
+                to="/register"
                 className="font-semibold text-blue-500 hover:text-blue-400"
               >
                 Create account
