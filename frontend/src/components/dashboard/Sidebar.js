@@ -1,8 +1,6 @@
-"use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { Link, useLocation } from "react-router-dom";
 
 const menuItems = [
   {
@@ -33,7 +31,9 @@ const menuItems = [
 ];
 
 export default function Sidebar() {
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
+
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -60,8 +60,6 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* MOBILE BACKDROP */}
-
       {isOpen && (
         <div
           onClick={closeSidebar}
@@ -74,8 +72,6 @@ export default function Sidebar() {
           "
         />
       )}
-
-      {/* SIDEBAR */}
 
       <aside
         className={`
@@ -95,7 +91,6 @@ export default function Sidebar() {
           duration-300
           dark:border-slate-800
           dark:bg-slate-900
-
           lg:translate-x-0
 
           ${
@@ -105,11 +100,9 @@ export default function Sidebar() {
           }
         `}
       >
-        {/* LOGO */}
-
         <div className="flex h-24 items-center justify-between px-5">
           <Link
-            href="/dashboard"
+            to="/dashboard"
             onClick={closeSidebar}
             className="
               text-2xl
@@ -120,8 +113,6 @@ export default function Sidebar() {
           >
             Print<span className="text-blue-500">Anywhere</span>
           </Link>
-
-          {/* CLOSE BUTTON */}
 
           <button
             type="button"
@@ -145,21 +136,17 @@ export default function Sidebar() {
           </button>
         </div>
 
-        {/* NAVIGATION */}
-
         <nav className="flex-1 px-4">
           <div className="space-y-2">
             {menuItems.map((item) => {
               const isActive =
                 pathname === item.href ||
-                pathname.startsWith(
-                  `${item.href}/`
-                );
+                pathname.startsWith(`${item.href}/`);
 
               return (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  to={item.href}
                   onClick={closeSidebar}
                   className={`
                     flex
@@ -189,8 +176,6 @@ export default function Sidebar() {
             })}
           </div>
         </nav>
-
-        {/* BOTTOM */}
 
         <div className="border-t border-slate-200 p-4 dark:border-slate-800">
           <p className="text-center text-xs text-slate-400">

@@ -1,12 +1,11 @@
-"use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom";
 
 import printerService from "@/services/printer.service.js";
 
 export default function RegisterPrinterPage() {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -36,13 +35,9 @@ export default function RegisterPrinterPage() {
 
     try {
       const response =
-        await printerService.registerPrinter(
-          formData
-        );
+        await printerService.registerPrinter(formData);
 
-      setSuccess(
-        "Printer registered successfully."
-      );
+      setSuccess("Printer registered successfully.");
 
       if (response.printerToken) {
         setPrinterToken(response.printerToken);
@@ -66,20 +61,15 @@ export default function RegisterPrinterPage() {
         py-6
         text-slate-900
         transition-colors
-
         sm:px-6
         sm:py-8
-
         lg:px-8
         lg:py-10
-
         dark:bg-slate-950
         dark:text-white
       "
     >
       <div className="mx-auto w-full max-w-2xl">
-
-        {/* PAGE HEADER */}
 
         <div className="mb-6 sm:mb-8">
           <h1
@@ -89,7 +79,6 @@ export default function RegisterPrinterPage() {
               tracking-tight
               text-slate-900
               dark:text-white
-
               sm:text-3xl
             "
           >
@@ -102,7 +91,6 @@ export default function RegisterPrinterPage() {
               text-sm
               text-slate-500
               dark:text-slate-400
-
               sm:text-base
             "
           >
@@ -110,8 +98,6 @@ export default function RegisterPrinterPage() {
             PrintAnywhere.
           </p>
         </div>
-
-        {/* FORM CARD */}
 
         <div
           className="
@@ -122,16 +108,12 @@ export default function RegisterPrinterPage() {
             p-5
             shadow-sm
             transition-colors
-
             sm:p-8
-
             dark:border-slate-800
             dark:bg-slate-900
           "
         >
           <form onSubmit={handleSubmit}>
-
-            {/* PRINTER NAME */}
 
             <div className="mb-6">
               <label
@@ -168,11 +150,9 @@ export default function RegisterPrinterPage() {
                   placeholder:text-slate-400
                   outline-none
                   transition
-
                   focus:border-blue-500
                   focus:ring-2
                   focus:ring-blue-500/20
-
                   dark:border-slate-700
                   dark:bg-slate-950
                   dark:text-white
@@ -180,8 +160,6 @@ export default function RegisterPrinterPage() {
                 "
               />
             </div>
-
-            {/* PRINTER ID */}
 
             <div className="mb-6">
               <label
@@ -218,11 +196,9 @@ export default function RegisterPrinterPage() {
                   placeholder:text-slate-400
                   outline-none
                   transition
-
                   focus:border-blue-500
                   focus:ring-2
                   focus:ring-blue-500/20
-
                   dark:border-slate-700
                   dark:bg-slate-950
                   dark:text-white
@@ -244,8 +220,6 @@ export default function RegisterPrinterPage() {
               </p>
             </div>
 
-            {/* ERROR */}
-
             {error && (
               <div
                 className="
@@ -258,7 +232,6 @@ export default function RegisterPrinterPage() {
                   py-3
                   text-sm
                   text-red-700
-
                   dark:border-red-900
                   dark:bg-red-950/30
                   dark:text-red-400
@@ -267,8 +240,6 @@ export default function RegisterPrinterPage() {
                 {error}
               </div>
             )}
-
-            {/* SUCCESS */}
 
             {success && (
               <div
@@ -282,7 +253,6 @@ export default function RegisterPrinterPage() {
                   py-3
                   text-sm
                   text-green-700
-
                   dark:border-green-900
                   dark:bg-green-950/30
                   dark:text-green-400
@@ -291,8 +261,6 @@ export default function RegisterPrinterPage() {
                 {success}
               </div>
             )}
-
-            {/* PRINTER TOKEN */}
 
             {printerToken && (
               <div
@@ -303,9 +271,7 @@ export default function RegisterPrinterPage() {
                   border-yellow-200
                   bg-yellow-50
                   p-4
-
                   sm:p-5
-
                   dark:border-yellow-800
                   dark:bg-yellow-950/20
                 "
@@ -327,7 +293,6 @@ export default function RegisterPrinterPage() {
                     rounded-lg
                     bg-white
                     p-3
-
                     dark:bg-slate-950
                   "
                 >
@@ -359,8 +324,6 @@ export default function RegisterPrinterPage() {
               </div>
             )}
 
-            {/* SUBMIT */}
-
             <button
               type="submit"
               disabled={loading}
@@ -375,29 +338,22 @@ export default function RegisterPrinterPage() {
                 text-white
                 shadow-sm
                 transition
-
                 hover:bg-blue-700
                 active:scale-[0.98]
-
                 disabled:cursor-not-allowed
                 disabled:opacity-50
-
                 sm:text-base
               "
             >
-              {loading
-                ? "Registering..."
-                : "Register Printer"}
+              {loading ? "Registering..." : "Register Printer"}
             </button>
 
           </form>
         </div>
 
-        {/* BACK LINK */}
-
         <button
           type="button"
-          onClick={() => router.push("/printers")}
+          onClick={() => navigate("/printers")}
           className="
             mt-5
             w-full
@@ -407,7 +363,6 @@ export default function RegisterPrinterPage() {
             text-slate-500
             transition
             hover:text-blue-600
-
             dark:text-slate-400
             dark:hover:text-blue-400
           "

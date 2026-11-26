@@ -1,8 +1,6 @@
-"use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useNavigate, Link } from "react-router-dom";
 
 import authService from "@/services/auth.service.js";
 import ThemeToggle from "../ThemeToggle.jsx";
@@ -36,7 +34,7 @@ const menuItems = [
 ];
 
 export default function Header() {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -46,7 +44,7 @@ export default function Header() {
 
   const handleLogout = () => {
     authService.logout();
-    router.replace("/login");
+    navigate("/login", { replace: true });
   };
 
   const closeMenu = () => {
@@ -71,21 +69,20 @@ export default function Header() {
           py-3
           dark:border-slate-800
           dark:bg-slate-950
-
           sm:px-6
           lg:h-24
           lg:px-8
         "
       >
-        {/* LEFT */}
-
         <div className="flex items-center gap-3">
-
-          {/* MOBILE MENU BUTTON */}
 
           <button
             type="button"
-            onClick={() => setMenuOpen(true)}
+            onClick={() =>
+              window.dispatchEvent(
+                new Event("open-printanywhere-sidebar")
+              )
+            }
             className="
               flex
               h-11
@@ -100,9 +97,7 @@ export default function Header() {
               shadow-sm
               transition
               active:scale-95
-
               lg:hidden
-
               dark:bg-slate-800
               dark:text-slate-200
             "
@@ -111,8 +106,6 @@ export default function Header() {
             ☰
           </button>
 
-          {/* TITLE */}
-
           <div>
             <h1
               className="
@@ -120,7 +113,6 @@ export default function Header() {
                 font-bold
                 text-slate-900
                 dark:text-white
-
                 sm:text-xl
                 lg:text-2xl
               "
@@ -134,7 +126,6 @@ export default function Header() {
                 text-sm
                 text-slate-500
                 dark:text-slate-400
-
                 sm:block
               "
             >
@@ -142,8 +133,6 @@ export default function Header() {
             </p>
           </div>
         </div>
-
-        {/* RIGHT */}
 
         <div className="flex items-center gap-2 sm:gap-4 lg:gap-5">
 
@@ -172,7 +161,6 @@ export default function Header() {
               text-sm
               font-bold
               text-white
-
               sm:h-10
               sm:w-10
             "
@@ -193,7 +181,6 @@ export default function Header() {
               text-white
               transition
               hover:bg-red-700
-
               sm:px-4
               sm:text-sm
             "
@@ -203,12 +190,8 @@ export default function Header() {
         </div>
       </header>
 
-      {/* MOBILE MENU */}
-
       {menuOpen && (
         <>
-          {/* BACKDROP */}
-
           <div
             className="
               fixed
@@ -219,8 +202,6 @@ export default function Header() {
             "
             onClick={closeMenu}
           />
-
-          {/* DRAWER */}
 
           <aside
             className="
@@ -239,8 +220,6 @@ export default function Header() {
               lg:hidden
             "
           >
-            {/* DRAWER HEADER */}
-
             <div
               className="
                 flex
@@ -254,7 +233,7 @@ export default function Header() {
               "
             >
               <Link
-                href="/dashboard"
+                to="/dashboard"
                 onClick={closeMenu}
                 className="
                   text-2xl
@@ -288,24 +267,19 @@ export default function Header() {
               </button>
             </div>
 
-            {/* MENU */}
-
             <nav className="p-4">
               <div className="space-y-2">
                 {menuItems.map((item) => {
-                  const currentPath =
-                    window.location.pathname;
+                  const currentPath = window.location.pathname;
 
                   const isActive =
                     currentPath === item.href ||
-                    currentPath.startsWith(
-                      `${item.href}/`
-                    );
+                    currentPath.startsWith(`${item.href}/`);
 
                   return (
                     <Link
                       key={item.href}
-                      href={item.href}
+                      to={item.href}
                       onClick={closeMenu}
                       className={`
                         flex
@@ -329,9 +303,7 @@ export default function Header() {
                         {item.icon}
                       </span>
 
-                      <span>
-                        {item.name}
-                      </span>
+                      <span>{item.name}</span>
                     </Link>
                   );
                 })}
