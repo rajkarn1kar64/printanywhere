@@ -1,13 +1,11 @@
-"use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link, useNavigate } from "react-router-dom";
 
 import authService from "@/services/auth.service.js";
 
 export default function RegisterPage() {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -36,16 +34,13 @@ export default function RegisterPage() {
     try {
       await authService.register(formData);
 
-      /*
-       * Backend registration does not return a JWT.
-       * Therefore login immediately after registration.
-       */
+      // Login immediately after registration
       await authService.login({
         email: formData.email,
         password: formData.password,
       });
 
-      router.replace("/dashboard");
+      navigate("/dashboard", { replace: true });
     } catch (error) {
       setError(
         error.response?.data?.message ||
@@ -130,6 +125,7 @@ export default function RegisterPage() {
               )}
 
               <button
+                type="submit"
                 disabled={loading}
                 className="w-full rounded-xl bg-blue-600 px-4 py-3 font-semibold hover:bg-blue-700 disabled:opacity-50"
               >
@@ -140,7 +136,7 @@ export default function RegisterPage() {
             <p className="mt-6 text-center text-sm text-slate-400">
               Already have an account?{" "}
               <Link
-                href="/login"
+                to="/login"
                 className="text-blue-500"
               >
                 Login
