@@ -122,12 +122,15 @@ jobs:
           IMAGE_PREFIX: ghcr.io/${{ env.OWNER }}
           MONGO_USER: ${{ secrets.MONGO_USER }}
           MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: GHCR_USER,GHCR_TOKEN,IMAGE_PREFIX,MONGO_USER,MONGO_PASSWORD
-          script: |
+          envs: GHCR_USER,GHCR_TOKEN,IMAGE_PREFIX,MONGO_USER,MONGO_PASSWORD,JWT_SECRET,CLOUDINARY_CLOUD_NAME,CLOUDINARY_API_KEY,CLOUDINARY_API_SECRET          script: |
             set -e
             cd ~/app
 
